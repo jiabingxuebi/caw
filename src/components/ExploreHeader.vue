@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between items-center gap-3 p-4">
+  <div class="flex items-center gap-3 p-4">
     <!-- 应用 Logo - 只在手机模式显示 -->
     <div class="lg:hidden">
       <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -10,14 +10,37 @@
     </div>
 
     <!-- 右侧按钮组 -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 ml-auto">
     <!-- 主题切换按钮 -->
     <button
       class="btn btn-ghost btn-circle"
-      title="切换主题"
+      :title="isDark() ? '切换到亮色模式' : '切换到暗色模式'"
       @click="toggleTheme"
     >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- 太阳图标 (亮色模式时显示) -->
+      <svg
+        v-if="!isDark()"
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+        />
+      </svg>
+
+      <!-- 月亮图标 (暗色模式时显示) -->
+      <svg
+        v-else
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -41,8 +64,7 @@
 </template>
 
 <script setup>
-// 暂时的主题切换函数，稍后实现
-const toggleTheme = () => {
-  console.log('切换主题')
-}
+import { useTheme } from '../composables/useTheme'
+
+const { toggleTheme, isDark } = useTheme()
 </script>

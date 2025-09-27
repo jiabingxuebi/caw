@@ -59,7 +59,7 @@ const currentPageTitle = computed(() => {
     <div class="hidden lg:flex min-h-screen">
       <!-- 侧边栏 -->
       <div
-        class="bg-base-200 transition-all duration-300 ease-in-out flex-shrink-0 overflow-hidden"
+        class="bg-base-200 transition-[width] duration-200 ease-out flex-shrink-0 overflow-hidden"
         :class="sidebarCollapsed ? 'w-15' : 'w-64'"
       >
         <!-- 侧边栏头部 -->
