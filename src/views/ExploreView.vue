@@ -1,8 +1,5 @@
 <template>
   <div>
-    <!-- 顶部 Header -->
-    <ExploreHeader />
-
     <!-- 页面内容 -->
     <div class="p-4">
       <!-- 桌面模式过滤器 -->
@@ -67,7 +64,6 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import ExploreHeader from '../components/ExploreHeader.vue'
 import CharacterCard from '../components/CharacterCard.vue'
 import CharacterTagFilterDialog from '../components/CharacterTagFilterDialog.vue'
 import DesktopCharacterFilter from '../components/DesktopCharacterFilter.vue'

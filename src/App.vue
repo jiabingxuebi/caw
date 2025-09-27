@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import AppHeader from './components/AppHeader.vue'
 
 const route = useRoute()
 
@@ -133,6 +134,9 @@ const currentPageTitle = computed(() => {
       </div>
 
       <div class="flex-1 flex flex-col">
+        <!-- 顶部Header -->
+        <AppHeader />
+
         <main class="flex-1 overflow-auto">
           <router-view />
         </main>
@@ -140,6 +144,9 @@ const currentPageTitle = computed(() => {
     </div>
 
     <div class="lg:hidden min-h-screen flex flex-col">
+      <!-- 顶部Header -->
+      <AppHeader />
+
       <!-- 页面内容 -->
       <main class="flex-1 pb-20">
         <router-view />
