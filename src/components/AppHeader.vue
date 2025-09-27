@@ -1,5 +1,11 @@
 <template>
-  <div class="flex items-center gap-3 p-4">
+  <div :class="[
+    'fixed top-0 right-0 z-50 bg-base-100 border-b border-base-300 flex items-center gap-3 p-4 transition-[left] duration-200 ease-out',
+    // 手机端：覆盖全屏
+    'left-0 lg:left-15',
+    // 桌面端：根据侧边栏状态调整left偏移
+    { 'lg:left-64': !sidebarCollapsed }
+  ]">
     <!-- 应用 Logo - 只在手机模式显示 -->
     <div class="lg:hidden">
       <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -65,6 +71,14 @@
 
 <script setup>
 import { useTheme } from '../composables/useTheme'
+
+// Props
+const props = defineProps({
+  sidebarCollapsed: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const { toggleTheme, isDark } = useTheme()
 </script>

@@ -60,7 +60,7 @@ const currentPageTitle = computed(() => {
     <div class="hidden lg:flex min-h-screen">
       <!-- 侧边栏 -->
       <div
-        class="bg-base-200 transition-[width] duration-200 ease-out flex-shrink-0 overflow-hidden"
+        class="fixed left-0 top-0 h-screen bg-base-200 transition-[width] duration-200 ease-out flex-shrink-0 overflow-hidden z-40"
         :class="sidebarCollapsed ? 'w-15' : 'w-64'"
       >
         <!-- 侧边栏头部 -->
@@ -133,11 +133,11 @@ const currentPageTitle = computed(() => {
         </div>
       </div>
 
-      <div class="flex-1 flex flex-col">
+      <div class="flex-1 flex flex-col" :class="sidebarCollapsed ? 'ml-15' : 'ml-64'">
         <!-- 顶部Header -->
-        <AppHeader />
+        <AppHeader :sidebar-collapsed="sidebarCollapsed" />
 
-        <main class="flex-1 overflow-auto">
+        <main class="flex-1 overflow-auto pt-20">
           <router-view />
         </main>
       </div>
@@ -145,10 +145,10 @@ const currentPageTitle = computed(() => {
 
     <div class="lg:hidden min-h-screen flex flex-col">
       <!-- 顶部Header -->
-      <AppHeader />
+      <AppHeader :sidebar-collapsed="false" />
 
       <!-- 页面内容 -->
-      <main class="flex-1 pb-20">
+      <main class="flex-1 pb-20 pt-20">
         <router-view />
       </main>
 
