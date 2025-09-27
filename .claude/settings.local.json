@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__context7__get-library-docs",
+      "Bash(npx prettier:*)",
+      "WebFetch(domain:chat.openai.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
