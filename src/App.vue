@@ -63,14 +63,13 @@ const currentPageTitle = computed(() => {
         :class="sidebarCollapsed ? 'w-15' : 'w-64'"
       >
         <!-- 侧边栏头部 -->
-        <div class="p-3 border-b border-base-300">
+        <div class="p-2 border-b border-base-300">
           <div class="flex items-center justify-between">
             <div class="flex items-center">
               <!-- Logo - 收起状态下点击展开 -->
               <button
-                v-if="sidebarCollapsed"
                 @click="toggleSidebar"
-                class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center hover:bg-primary/80 transition-colors flex-shrink-0"
+                class="w-11 h-11 bg-primary rounded-lg flex items-center justify-center hover:bg-primary/80 transition-colors flex-shrink-0"
                 title="展开侧边栏"
               >
                 <svg class="w-5 h-5 text-primary-content" fill="currentColor" viewBox="0 0 24 24">
@@ -78,17 +77,6 @@ const currentPageTitle = computed(() => {
                 </svg>
               </button>
 
-              <!-- Logo - 展开状态下纯展示 -->
-              <div
-                v-if="!sidebarCollapsed"
-                class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0"
-              >
-                <svg class="w-5 h-5 text-primary-content" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
-
-              <!-- 标题 - 通过overflow隐藏 -->
               <h2 class="ml-3 text-xl font-bold whitespace-nowrap">应用名称</h2>
             </div>
 
@@ -144,33 +132,16 @@ const currentPageTitle = computed(() => {
         </div>
       </div>
 
-      <!-- 主内容区域 -->
       <div class="flex-1 flex flex-col">
-        <!-- 顶部工具栏 -->
-        <div class="bg-base-100 border-b border-base-300 p-4">
-          <div class="flex items-center gap-4">
-            <h1 class="text-2xl font-bold">{{ currentPageTitle }}</h1>
-          </div>
-        </div>
-
-        <!-- 内容区域 -->
-        <main class="flex-1 p-6 overflow-auto">
+        <main class="flex-1 overflow-auto">
           <router-view />
         </main>
       </div>
     </div>
 
-    <!-- 移动端布局 -->
     <div class="lg:hidden min-h-screen flex flex-col">
-      <!-- 顶部导航栏 -->
-      <div class="navbar bg-base-100 border-b">
-        <div class="flex-1">
-          <h1 class="text-xl font-bold">{{ currentPageTitle }}</h1>
-        </div>
-      </div>
-
       <!-- 页面内容 -->
-      <main class="flex-1 p-4 pb-20">
+      <main class="flex-1 pb-20">
         <router-view />
       </main>
 
@@ -179,7 +150,7 @@ const currentPageTitle = computed(() => {
         <button
           v-for="item in navItems"
           :key="item.name"
-          :class="{ 'dock-active': $route.name === item.name }"
+          :class="{ 'text-primary': $route.name === item.name }"
           @click="$router.push(item.path)"
         >
           <svg class="size-[1.2em]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
