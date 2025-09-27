@@ -14,10 +14,10 @@
       </div>
 
       <div class="absolute bottom-0 left-0 right-0 p-3 lg:p-5">
-        <h3 class="text-white font-bold text-base lg:text-lg mb-1">{{ character.name }}</h3>
+        <h3 class="text-white font-bold text-sm lg:text-base mb-1">{{ character.name }}</h3>
 
         <p
-          class="text-white/90 text-xs lg:text-sm mb-2 truncate cursor-pointer group-hover:whitespace-normal group-hover:overflow-visible"
+          class="text-white/90 text-xs lg:text-sm mb-2 truncate"
           :title="character.description"
         >
           {{ character.description }}

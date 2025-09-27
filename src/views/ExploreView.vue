@@ -5,89 +5,51 @@
 
     <!-- 页面内容 -->
     <div class="p-4">
-      <!-- 搜索框和过滤器 -->
-      <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-6 gap-4">
-        <!-- 搜索框 -->
-        <div class="relative w-full lg:w-96">
-          <div class="absolute top-1/2 left-3 transform -translate-y-1/2 pointer-events-none z-10">
-            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-          <input
-            type="text"
-            placeholder="搜索角色..."
-            class="input w-full pl-10 focus:outline-none focus:ring-1 focus:ring-primary"
-            v-model="searchQuery"
-            @keyup.enter="handleSearch"
-          />
-        </div>
+      <!-- 桌面模式过滤器 -->
+      <DesktopCharacterFilter
+        v-model:searchQuery="searchQuery"
+        v-model:unlimitedMode="unlimitedMode"
+        :selectedTags="selectedTags"
+        :currentSort="currentSort"
+        :sortOptions="sortOptions"
+        :sortDropdownOpen="sortDropdownOpen"
+        @search="handleSearch"
+        @open-filter="openFilterModal"
+        @toggle-sort="toggleSortDropdown"
+        @select-sort="selectSort"
+      />
 
-        <!-- 过滤器和排序 -->
-        <div class="flex items-center gap-2 justify-start lg:justify-end">
-          <!-- 标签过滤器 -->
-          <div
-            @click="openFilterModal"
-            class="relative flex items-center bg-base-100 border border-base-300 rounded-lg px-3 py-2 cursor-pointer hover:bg-base-200 transition-colors"
-          >
-            <svg class="w-4 h-4 text-base-content" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M3 4h2v2H3V4zm4 0h14v2H7V4zM3 10h2v2H3v-2zm4 0h14v2H7v-2zM3 16h2v2H3v-2zm4 0h14v2H7v-2z" />
-            </svg>
-            <div
-              v-if="selectedTags.length > 0"
-              class="absolute -top-1 -right-1 bg-base-content text-base-100 text-xs rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none"
-            >
-              {{ selectedTags.length }}
-            </div>
-          </div>
-
-          <!-- 排序功能 -->
-          <div class="relative">
-            <div
-              @click="toggleSortDropdown"
-              class="flex items-center bg-base-100 border border-base-300 rounded-lg px-3 py-2 cursor-pointer hover:bg-base-200 transition-colors min-w-[110px]"
-            >
-              <div class="flex items-center justify-between w-full gap-2">
-                <span class="text-sm font-medium text-base-content">{{ currentSort }}</span>
-                <svg
-                  class="w-4 h-4 text-base-content transition-transform duration-200 flex-shrink-0"
-                  :class="{ 'rotate-180': sortDropdownOpen }"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-            </div>
-
-            <!-- 下拉菜单 -->
-            <div
-              v-show="sortDropdownOpen"
-              class="absolute top-full mt-1 right-0 bg-base-100 border border-base-300 rounded-lg shadow-lg py-1 w-full z-20"
-            >
-              <div
-                v-for="option in sortOptions"
-                :key="option"
-                @click="selectSort(option)"
-                class="px-3 py-2 text-sm text-base-content hover:bg-base-200 cursor-pointer transition-colors"
-                :class="{ 'bg-base-200 font-medium': option === currentSort }"
-              >
-                {{ option }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- 移动模式过滤器 -->
+      <MobileCharacterFilter
+        v-model:searchQuery="searchQuery"
+        v-model:unlimitedMode="unlimitedMode"
+        :selectedTags="selectedTags"
+        :currentSort="currentSort"
+        :sortOptions="sortOptions"
+        :sortDropdownOpen="sortDropdownOpen"
+        @search="handleSearch"
+        @open-filter="openFilterModal"
+        @toggle-sort="toggleSortDropdown"
+        @select-sort="selectSort"
+      />
 
       <!-- 角色卡片网格 -->
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        <CharacterCard v-for="character in filteredCharacters" :key="character.id" :character="character" />
+        <CharacterCard v-for="character in displayedCharacters" :key="character.id" :character="character" />
+      </div>
+
+      <!-- 加载状态 -->
+      <div v-if="isLoading" class="flex justify-center items-center mt-8 py-8">
+        <span class="loading loading-spinner loading-md"></span>
+        <span class="ml-2 text-base-content/60">正在加载更多角色...</span>
+      </div>
+
+      <!-- 没有更多数据提示 -->
+      <div
+        v-if="!hasMore && !isLoading && displayedCharacters.length > 0"
+        class="text-center mt-8 py-4 text-base-content/60"
+      >
+        已显示所有角色
       </div>
     </div>
 
@@ -108,6 +70,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import ExploreHeader from '../components/ExploreHeader.vue'
 import CharacterCard from '../components/CharacterCard.vue'
 import CharacterTagFilterDialog from '../components/CharacterTagFilterDialog.vue'
+import DesktopCharacterFilter from '../components/DesktopCharacterFilter.vue'
+import MobileCharacterFilter from '../components/MobileCharacterFilter.vue'
 
 // 搜索状态
 const searchQuery = ref('')
@@ -121,21 +85,39 @@ const sortOptions = ['Trending', 'Top Rated', 'Popular', 'Latest', 'Name']
 const filterModalOpen = ref(false)
 const selectedTags = ref([])
 
+// 无限制模式状态
+const unlimitedMode = ref(false)
+
+// 分页状态
+const pageSize = 12
+const currentPage = ref(1)
+const isLoading = ref(false)
+const hasMore = ref(true)
+
 // 计算所有唯一标签
 const allTags = computed(() => {
   const tags = new Set()
-  characters.value.forEach(char => {
+  allCharacters.forEach(char => {
     char.tags.forEach(tag => tags.add(tag))
   })
   return Array.from(tags).sort()
 })
 
-// 过滤后的角色列表
+// 过滤后的角色列表（基于完整数据库）
 const filteredCharacters = computed(() => {
   if (selectedTags.value.length === 0) {
-    return characters.value
+    return allCharacters
   }
-  return characters.value.filter(char => selectedTags.value.some(tag => char.tags.includes(tag)))
+  return allCharacters.filter(char => selectedTags.value.some(tag => char.tags.includes(tag)))
+})
+
+// 当前页显示的角色
+const displayedCharacters = computed(() => {
+  const end = currentPage.value * pageSize
+  const result = filteredCharacters.value.slice(0, end)
+  // 更新是否还有更多数据
+  hasMore.value = end < filteredCharacters.value.length
+  return result
 })
 
 // 搜索处理函数
@@ -164,6 +146,43 @@ const openFilterModal = () => {
 // 处理过滤器应用
 const handleFiltersApplied = tags => {
   console.log('应用过滤器:', tags)
+  // 重置分页
+  currentPage.value = 1
+}
+
+// 加载更多
+const loadMore = async () => {
+  if (isLoading.value || !hasMore.value) return
+
+  isLoading.value = true
+
+  // 模拟网络延迟
+  await new Promise(resolve => setTimeout(resolve, 800))
+
+  currentPage.value++
+  isLoading.value = false
+}
+
+// 防抖timer
+let scrollTimer = null
+
+// 滚动监听器
+const handleScroll = () => {
+  // 防抖处理
+  if (scrollTimer) {
+    clearTimeout(scrollTimer)
+  }
+
+  scrollTimer = setTimeout(() => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+    const windowHeight = window.innerHeight
+    const documentHeight = document.documentElement.scrollHeight
+
+    // 当滚动到距离底部200px时开始加载
+    if (scrollTop + windowHeight >= documentHeight - 200) {
+      loadMore()
+    }
+  }, 100)
 }
 
 // 点击外部关闭下拉菜单
@@ -174,17 +193,49 @@ const handleClickOutside = event => {
   }
 }
 
+// 初始化数据
+const initializeData = async () => {
+  // 初始显示第一页数据
+  currentPage.value = 1
+
+  // 等待DOM渲染完成后检查是否需要加载更多内容
+  await new Promise(resolve => setTimeout(resolve, 100))
+
+  // 如果页面内容不足以产生滚动条，自动加载更多
+  const checkAndLoadMore = () => {
+    const documentHeight = document.documentElement.scrollHeight
+    const windowHeight = window.innerHeight
+
+    // 如果页面高度不足以产生滚动，且还有更多数据，则继续加载
+    if (documentHeight <= windowHeight && hasMore.value && !isLoading.value) {
+      loadMore().then(() => {
+        // 递归检查，确保有足够内容
+        setTimeout(checkAndLoadMore, 100)
+      })
+    }
+  }
+
+  checkAndLoadMore()
+}
+
 // 生命周期
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  window.addEventListener('scroll', handleScroll)
+  initializeData()
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('scroll', handleScroll)
+  // 清理防抖timer
+  if (scrollTimer) {
+    clearTimeout(scrollTimer)
+  }
 })
 
-// 模拟角色数据
-const characters = ref([
+// 模拟完整角色数据库
+const allCharacters = [
   {
     id: 1,
     name: 'Wriothesley',
@@ -240,5 +291,82 @@ const characters = ref([
     likes: 92,
     users: 67,
   },
-])
+  {
+    id: 6,
+    name: 'Sophia',
+    username: '@healer',
+    description: 'Gentle healer with ancient wisdom',
+    image: 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp',
+    tags: ['Healer', 'Wisdom', 'SFW', 'Gentle', 'Caring'],
+    conversations: '22.1k',
+    likes: 156,
+    users: 298,
+  },
+  {
+    id: 7,
+    name: 'Raven',
+    username: '@darksoul',
+    description: 'Dark and mysterious assassin',
+    image: 'https://img.daisyui.com/images/stock/photo-1567653418876-5bb0e566e1c2.webp',
+    tags: ['Dark', 'Mysterious', 'Assassin', 'NSFW', 'Dangerous'],
+    conversations: '18.7k',
+    likes: 134,
+    users: 201,
+  },
+  {
+    id: 8,
+    name: 'Phoenix',
+    username: '@firebird',
+    description: 'Immortal guardian of fire',
+    image: 'https://img.daisyui.com/images/stock/photo-1629904853893-c2c8981a1dc5.webp',
+    tags: ['Fire', 'Immortal', 'Guardian', 'Powerful', 'Magical'],
+    conversations: '26.3k',
+    likes: 189,
+    users: 312,
+  },
+  {
+    id: 9,
+    name: 'Aurora',
+    username: '@lightbringer',
+    description: 'Bringer of dawn and hope',
+    image: 'https://img.daisyui.com/images/stock/photo-1580489944761-15a19d654956.webp',
+    tags: ['Light', 'Hope', 'Dawn', 'Positive', 'Inspiring'],
+    conversations: '14.2k',
+    likes: 167,
+    users: 234,
+  },
+  {
+    id: 10,
+    name: 'Shadow',
+    username: '@nightwalker',
+    description: 'Master of stealth and shadows',
+    image: 'https://img.daisyui.com/images/stock/photo-1568602471122-7832951cc4c5.webp',
+    tags: ['Stealth', 'Shadow', 'Night', 'Silent', 'Ninja'],
+    conversations: '19.8k',
+    likes: 145,
+    users: 189,
+  },
+  {
+    id: 11,
+    name: 'Crystal',
+    username: '@gemkeeper',
+    description: 'Guardian of precious crystals',
+    image: 'https://img.daisyui.com/images/stock/photo-1572635196237-14b3f281503f.webp',
+    tags: ['Crystal', 'Guardian', 'Precious', 'Magic', 'Protection'],
+    conversations: '11.4k',
+    likes: 123,
+    users: 156,
+  },
+  {
+    id: 12,
+    name: 'Storm',
+    username: '@thundergod',
+    description: 'Controller of thunder and lightning',
+    image: 'https://img.daisyui.com/images/stock/photo-1589681424213-023c2da5d0ac.webp',
+    tags: ['Thunder', 'Lightning', 'Storm', 'Power', 'Elemental'],
+    conversations: '23.6k',
+    likes: 178,
+    users: 267,
+  },
+]
 </script>
