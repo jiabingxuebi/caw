@@ -29,13 +29,21 @@
         </div>
 
         <!-- 过滤器和排序 -->
-        <div class="flex items-center gap-3 justify-start lg:justify-end">
+        <div class="flex items-center gap-2 justify-start lg:justify-end">
           <!-- 标签过滤器 -->
-          <div class="relative flex items-center bg-base-100 border border-base-300 rounded-lg px-3 py-2 cursor-pointer hover:bg-base-200 transition-colors">
+          <div
+            @click="openFilterModal"
+            class="relative flex items-center bg-base-100 border border-base-300 rounded-lg px-3 py-2 cursor-pointer hover:bg-base-200 transition-colors"
+          >
             <svg class="w-4 h-4 text-base-content" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M3 4h2v2H3V4zm4 0h14v2H7V4zM3 10h2v2H3v-2zm4 0h14v2H7v-2zM3 16h2v2H3v-2zm4 0h14v2H7v-2z"/>
+              <path d="M3 4h2v2H3V4zm4 0h14v2H7V4zM3 10h2v2H3v-2zm4 0h14v2H7v-2zM3 16h2v2H3v-2zm4 0h14v2H7v-2z" />
             </svg>
-            <div class="absolute -top-1 -right-1 bg-base-content text-base-100 text-xs rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none">3</div>
+            <div
+              v-if="selectedTags.length > 0"
+              class="absolute -top-1 -right-1 bg-base-content text-base-100 text-xs rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none"
+            >
+              {{ selectedTags.length }}
+            </div>
           </div>
 
           <!-- 排序功能 -->
@@ -53,7 +61,7 @@
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
             </div>
@@ -79,16 +87,27 @@
 
       <!-- 角色卡片网格 -->
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        <CharacterCard v-for="character in characters" :key="character.id" :character="character" />
+        <CharacterCard v-for="character in filteredCharacters" :key="character.id" :character="character" />
       </div>
     </div>
+
+    <!-- 标签过滤器弹窗 -->
+    <CharacterTagFilterDialog
+      :allTags="allTags"
+      :selectedTags="selectedTags"
+      :isOpen="filterModalOpen"
+      @update:selectedTags="selectedTags = $event"
+      @update:isOpen="filterModalOpen = $event"
+      @apply-filters="handleFiltersApplied"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import ExploreHeader from '../components/ExploreHeader.vue'
 import CharacterCard from '../components/CharacterCard.vue'
+import CharacterTagFilterDialog from '../components/CharacterTagFilterDialog.vue'
 
 // 搜索状态
 const searchQuery = ref('')
@@ -97,6 +116,27 @@ const searchQuery = ref('')
 const sortDropdownOpen = ref(false)
 const currentSort = ref('Trending')
 const sortOptions = ['Trending', 'Top Rated', 'Popular', 'Latest', 'Name']
+
+// 过滤器状态
+const filterModalOpen = ref(false)
+const selectedTags = ref([])
+
+// 计算所有唯一标签
+const allTags = computed(() => {
+  const tags = new Set()
+  characters.value.forEach(char => {
+    char.tags.forEach(tag => tags.add(tag))
+  })
+  return Array.from(tags).sort()
+})
+
+// 过滤后的角色列表
+const filteredCharacters = computed(() => {
+  if (selectedTags.value.length === 0) {
+    return characters.value
+  }
+  return characters.value.filter(char => selectedTags.value.some(tag => char.tags.includes(tag)))
+})
 
 // 搜索处理函数
 const handleSearch = () => {
@@ -110,14 +150,24 @@ const toggleSortDropdown = () => {
 }
 
 // 选择排序选项
-const selectSort = (option) => {
+const selectSort = option => {
   currentSort.value = option
   sortDropdownOpen.value = false
   console.log('选择排序:', option)
 }
 
+// 打开过滤器弹窗
+const openFilterModal = () => {
+  filterModalOpen.value = true
+}
+
+// 处理过滤器应用
+const handleFiltersApplied = tags => {
+  console.log('应用过滤器:', tags)
+}
+
 // 点击外部关闭下拉菜单
-const handleClickOutside = (event) => {
+const handleClickOutside = event => {
   const sortElement = event.target.closest('.relative')
   if (!sortElement) {
     sortDropdownOpen.value = false
