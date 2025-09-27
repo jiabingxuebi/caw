@@ -1,6 +1,6 @@
 <template>
   <div class="card bg-base-100 shadow-sm group cursor-pointer">
-    <figure class="relative aspect-[3/4] overflow-hidden rounded-t-xl">
+    <figure class="relative aspect-[3/4] overflow-hidden rounded-t-xl lg:aspect-[4/5]">
       <img
         :src="character.image"
         :alt="character.name"
@@ -13,14 +13,19 @@
         {{ character.username }}
       </div>
 
-      <div class="absolute bottom-0 left-0 right-0 p-4">
-        <h3 class="text-white font-bold text-lg mb-1">{{ character.name }}</h3>
+      <div class="absolute bottom-0 left-0 right-0 p-3 lg:p-5">
+        <h3 class="text-white font-bold text-base lg:text-lg mb-1">{{ character.name }}</h3>
 
-        <p class="text-white/90 text-sm mb-2 line-clamp-2">{{ character.description }}</p>
+        <p
+          class="text-white/90 text-xs lg:text-sm mb-2 truncate cursor-pointer group-hover:whitespace-normal group-hover:overflow-visible"
+          :title="character.description"
+        >
+          {{ character.description }}
+        </p>
 
-        <div class="flex items-center gap-2 text-white/80 text-xs">
+        <div class="flex items-center gap-2 lg:gap-3 text-white/80 text-xs lg:text-sm">
           <div class="flex items-center gap-1">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -32,7 +37,7 @@
           </div>
 
           <div class="flex items-center gap-1">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"

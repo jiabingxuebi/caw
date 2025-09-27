@@ -5,8 +5,33 @@
 
     <!-- 页面内容 -->
     <div class="p-4">
+      <!-- 搜索框 -->
+      <div class="mb-6">
+        <div class="w-full lg:w-96">
+          <div class="relative">
+            <div class="absolute top-1/2 left-3 transform -translate-y-1/2 pointer-events-none z-10">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="搜索角色..."
+              class="input input-bordered w-full pl-10"
+              v-model="searchQuery"
+              @keyup.enter="handleSearch"
+            />
+          </div>
+        </div>
+      </div>
+
       <!-- 角色卡片网格 -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3">
         <CharacterCard v-for="character in characters" :key="character.id" :character="character" />
       </div>
     </div>
@@ -17,6 +42,15 @@
 import { ref } from 'vue'
 import ExploreHeader from '../components/ExploreHeader.vue'
 import CharacterCard from '../components/CharacterCard.vue'
+
+// 搜索状态
+const searchQuery = ref('')
+
+// 搜索处理函数
+const handleSearch = () => {
+  console.log('搜索:', searchQuery.value)
+  // 这里可以添加实际的搜索逻辑
+}
 
 // 模拟角色数据
 const characters = ref([
