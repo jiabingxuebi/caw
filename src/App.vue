@@ -60,8 +60,8 @@ const currentPageTitle = computed(() => {
     <div class="hidden lg:flex min-h-screen">
       <!-- 侧边栏 -->
       <div
-        class="fixed left-0 top-0 h-screen bg-base-200 transition-[width] duration-200 ease-out flex-shrink-0 overflow-hidden z-40"
-        :class="sidebarCollapsed ? 'w-15' : 'w-64'"
+        class="fixed left-0 top-0 h-screen bg-base-200 transition-[width] duration-200 ease-out overflow-hidden z-40 flex flex-col"
+        :style="{ width: sidebarCollapsed ? 'var(--sidebar-width-collapsed)' : 'var(--sidebar-width-expanded)' }"
       >
         <!-- 侧边栏头部 -->
         <div class="p-2 border-b border-base-300">
@@ -133,11 +133,14 @@ const currentPageTitle = computed(() => {
         </div>
       </div>
 
-      <div class="flex-1 flex flex-col" :class="sidebarCollapsed ? 'ml-15' : 'ml-64'">
+      <div
+        class="flex-1 flex flex-col transition-[margin-left] duration-200 ease-out"
+        :style="{ marginLeft: sidebarCollapsed ? 'var(--sidebar-width-collapsed)' : 'var(--sidebar-width-expanded)' }"
+      >
         <!-- 顶部Header -->
         <AppHeader :sidebar-collapsed="sidebarCollapsed" />
 
-        <main class="flex-1 overflow-auto pt-20">
+        <main class="flex-1 overflow-auto" style="padding-top: var(--header-height)">
           <router-view />
         </main>
       </div>
@@ -148,7 +151,7 @@ const currentPageTitle = computed(() => {
       <AppHeader :sidebar-collapsed="false" />
 
       <!-- 页面内容 -->
-      <main class="flex-1 pb-20 pt-20">
+      <main class="flex-1" style="padding-top: var(--header-height); padding-bottom: var(--dock-height)">
         <router-view />
       </main>
 
@@ -169,3 +172,12 @@ const currentPageTitle = computed(() => {
     </div>
   </div>
 </template>
+
+<style>
+:root {
+  --sidebar-width-collapsed: 3.75rem;
+  --sidebar-width-expanded: 16rem;
+  --header-height: 3.75rem;
+  --dock-height: 5rem;
+}
+</style>

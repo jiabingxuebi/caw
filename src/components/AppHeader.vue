@@ -1,11 +1,11 @@
 <template>
-  <div :class="[
-    'fixed top-0 right-0 z-50 bg-base-100 border-b border-base-300 flex items-center gap-3 p-4 transition-[left] duration-200 ease-out',
-    // 手机端：覆盖全屏
-    'left-0 lg:left-15',
-    // 桌面端：根据侧边栏状态调整left偏移
-    { 'lg:left-64': !sidebarCollapsed }
-  ]">
+  <div
+    class="fixed top-0 right-0 z-50 bg-base-100 border-b border-base-300 flex items-center gap-3 px-4 py-2 transition-[left] duration-200 ease-out left-0"
+    :class="{
+      'lg:left-[var(--sidebar-width-collapsed)]': sidebarCollapsed,
+      'lg:left-[var(--sidebar-width-expanded)]': !sidebarCollapsed,
+    }"
+  >
     <!-- 应用 Logo - 只在手机模式显示 -->
     <div class="lg:hidden">
       <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -17,54 +17,39 @@
 
     <!-- 右侧按钮组 -->
     <div class="flex items-center gap-3 ml-auto">
-    <!-- 主题切换按钮 -->
-    <button
-      class="btn btn-ghost btn-circle"
-      :title="isDark() ? '切换到亮色模式' : '切换到暗色模式'"
-      @click="toggleTheme"
-    >
-      <!-- 太阳图标 (亮色模式时显示) -->
-      <svg
-        v-if="!isDark()"
-        class="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
+      <!-- 主题切换按钮 -->
+      <button
+        class="btn btn-ghost btn-circle"
+        :title="isDark() ? '切换到亮色模式' : '切换到暗色模式'"
+        @click="toggleTheme"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-        />
-      </svg>
+        <!-- 太阳图标 (亮色模式时显示) -->
+        <svg v-if="!isDark()" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
 
-      <!-- 月亮图标 (暗色模式时显示) -->
-      <svg
-        v-else
-        class="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-        />
-      </svg>
-    </button>
+        <!-- 月亮图标 (暗色模式时显示) -->
+        <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+          />
+        </svg>
+      </button>
 
-    <!-- 用户头像 -->
-    <div class="avatar">
-      <div class="w-10 rounded-full">
-        <img
-          src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-          alt="用户头像"
-        />
+      <!-- 用户头像 -->
+      <div class="avatar">
+        <div class="w-10 rounded-full">
+          <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="用户头像" />
+        </div>
       </div>
-    </div>
     </div>
   </div>
 </template>
@@ -76,8 +61,8 @@ import { useTheme } from '../composables/useTheme'
 const props = defineProps({
   sidebarCollapsed: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const { toggleTheme, isDark } = useTheme()
