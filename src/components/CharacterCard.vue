@@ -9,17 +9,73 @@
 
       <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 via-black/20 to-transparent"></div>
 
-      <div class="absolute top-3 left-3 bg-black/60 text-white px-2 py-1 rounded-full text-xs">
+      <!-- 草稿标志优先显示，否则显示用户名 -->
+      <div v-if="character.visibility === 'private'" class="absolute top-3 left-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+        草稿
+      </div>
+      <div v-else class="absolute top-3 left-3 bg-black/40 text-white px-2 py-1 rounded-full text-xs">
         {{ character.username }}
+      </div>
+
+      <!-- 三点菜单 - 只在showActions为true时显示 -->
+      <div v-if="showActions" class="absolute top-3 right-3">
+        <div class="dropdown dropdown-end">
+          <button
+            tabindex="0"
+            @click.stop
+            class="btn btn-circle btn-sm bg-transparent hover:bg-white/20 border-none text-white shadow-none"
+            title="更多操作"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+              />
+            </svg>
+          </button>
+          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow-lg">
+            <li>
+              <button
+                @click.stop="$emit('edit', character)"
+                class="flex items-center gap-2 text-sm"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+                编辑
+              </button>
+            </li>
+            <li>
+              <button
+                @click.stop="$emit('delete', character)"
+                class="flex items-center gap-2 text-sm text-error hover:text-error"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                删除
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div class="absolute bottom-0 left-0 right-0 p-3 lg:p-5">
         <h3 class="text-white font-bold text-sm lg:text-base mb-1">{{ character.name }}</h3>
 
-        <p
-          class="text-white/90 text-xs lg:text-sm mb-2 truncate"
-          :title="character.description"
-        >
+        <p class="text-white/90 text-xs lg:text-sm mb-2 truncate" :title="character.description">
           {{ character.description }}
         </p>
 
@@ -69,5 +125,11 @@ defineProps({
       users: 0,
     }),
   },
+  showActions: {
+    type: Boolean,
+    default: false,
+  },
 })
+
+defineEmits(['edit', 'delete'])
 </script>
