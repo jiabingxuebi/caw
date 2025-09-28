@@ -33,7 +33,7 @@
         <input
           type="text"
           placeholder="搜索角色..."
-          class="input w-full pl-10 focus:outline-none focus:ring-1 focus:ring-primary"
+          class="input w-full pl-10 focus:outline-none"
           :value="searchQuery"
           @input="$emit('update:searchQuery', $event.target.value)"
           @keyup.enter="$emit('search')"
