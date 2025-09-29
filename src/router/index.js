@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ExploreView from '../views/ExploreView.vue'
 import ChatView from '../views/ChatView.vue'
 import CreateView from '../views/CreateView.vue'
-import MessageView from '../views/MessageView.vue'
+import MemberView from '../views/MemberView.vue'
 import ProfileView from '../views/ProfileView.vue'
 
 const router = createRouter({
@@ -28,9 +28,9 @@ const router = createRouter({
       component: CreateView
     },
     {
-      path: '/message',
-      name: 'message',
-      component: MessageView
+      path: '/member',
+      name: 'member',
+      component: MemberView
     },
     {
       path: '/profile',
