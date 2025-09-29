@@ -111,7 +111,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import WebHeader from '../components/WebHeader.vue'
+import WebHeader from '../../components/WebHeader.vue'
 
 const route = useRoute()
 

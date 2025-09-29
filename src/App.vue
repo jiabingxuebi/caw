@@ -1,7 +1,11 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import DesktopLauncherView from './views/DesktopLauncherView.vue'
-import MobileLauncherView from './views/MobileLauncherView.vue'
+import { useRoute } from 'vue-router'
+import DesktopLauncherView from './views/desktop/DesktopLauncherView.vue'
+import MobileLauncherView from './views/mobile/MobileLauncherView.vue'
+import MobileStandaloneView from './views/mobile/MobileStandaloneView.vue'
+
+const route = useRoute()
 
 // 监听屏幕尺寸变化
 const isDesktop = ref(false)
@@ -11,9 +15,17 @@ const checkScreenSize = () => {
   isDesktop.value = window.innerWidth >= 1024 // lg breakpoint
 }
 
-// 根据屏幕尺寸选择组件
+// 根据屏幕尺寸和页面类型选择组件
 const currentLauncher = computed(() => {
-  return isDesktop.value ? DesktopLauncherView : MobileLauncherView
+  if (isDesktop.value) {
+    return DesktopLauncherView
+  } else {
+    // 移动端：检查是否为独立页面
+    if (route.meta?.standalone) {
+      return MobileStandaloneView
+    }
+    return MobileLauncherView
+  }
 })
 
 // 生命周期

@@ -1,11 +1,8 @@
 <template>
-  <div class="fixed top-0 left-0 right-0 z-50 bg-base-100 border-b border-base-300 flex items-center justify-between px-4 py-2 lg:hidden">
+  <div class="fixed top-0 left-0 right-0 z-50 bg-base-100 border-b border-base-300 flex items-center justify-between px-4 py-3 lg:hidden">
     <!-- 左侧内容区域 -->
     <div class="flex items-center">
-      <slot name="left">
-        <!-- 默认内容：简单标题 -->
-        <h1 class="text-lg font-semibold text-base-content">默认标题</h1>
-      </slot>
+      <slot name="left"></slot>
     </div>
 
     <!-- 右侧内容区域 -->

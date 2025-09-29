@@ -36,18 +36,26 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfileView
+    },
+    // 独立页面路由（移动端无底部导航）
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/mobile/SettingsView.vue'),
+      meta: { standalone: true }
+    },
+    {
+      path: '/chat/:id',
+      name: 'chat-detail',
+      component: () => import('../views/mobile/ChatDetailView.vue'),
+      meta: { standalone: true }
+    },
+    {
+      path: '/character/:id',
+      name: 'character-detail',
+      component: () => import('../views/mobile/CharacterDetailView.vue'),
+      meta: { standalone: true }
     }
-    // 未来可以在这里添加独立页面路由
-    // {
-    //   path: '/chat/:id',
-    //   name: 'chat-detail',
-    //   component: ChatDetailView
-    // },
-    // {
-    //   path: '/settings',
-    //   name: 'settings',
-    //   component: SettingsView
-    // }
   ],
 })
 

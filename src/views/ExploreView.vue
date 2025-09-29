@@ -41,7 +41,7 @@
     </MobileTabHeader>
 
     <!-- 页面内容 -->
-    <div class="p-4 lg:pt-4" style="padding-top: calc(var(--header-height) + 1rem)">
+    <div class="p-4">
       <!-- 桌面模式过滤器 -->
       <DesktopCharacterFilter
         v-model:searchQuery="searchQuery"

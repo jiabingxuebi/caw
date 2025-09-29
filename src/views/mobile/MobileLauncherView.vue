@@ -1,19 +1,21 @@
 <template>
   <!-- 移动端主容器 -->
   <div class="lg:hidden min-h-screen flex flex-col">
+    <!-- 移动端头部 -->
+    <MobileTabHeader>
+      <template #left>
+        <h1 class="text-xl font-semibold text-base-content">{{ currentPageTitle }}</h1>
+      </template>
+    </MobileTabHeader>
+
     <!-- Tab 页面内容区域 -->
-    <main class="flex-1 pb-20">
+    <main class="flex-1 pb-20" style="padding-top: var(--header-height)">
       <router-view />
     </main>
 
     <!-- 底部 Tab 导航 -->
-    <div class="dock">
-      <button
-        v-for="item in navItems"
-        :key="item.name"
-        :class="{ 'text-primary': $route.name === item.name }"
-        @click="$router.push(item.path)"
-      >
+    <div class="dock border-t border-base-300">
+      <button v-for="item in navItems" :key="item.name" :class="{ 'text-primary': $route.name === item.name }" @click="$router.push(item.path)">
         <svg class="size-[1.2em]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon" />
         </svg>
@@ -28,12 +30,7 @@
       <h1 class="text-xl font-bold mb-4">请使用桌面端界面</h1>
       <p class="text-base-content/60 mb-6">当前界面专为移动端设计，请在桌面上使用。</p>
       <div class="flex flex-wrap gap-2 justify-center">
-        <button
-          v-for="item in navItems"
-          :key="item.name"
-          @click="$router.push(item.path)"
-          class="btn btn-outline btn-sm"
-        >
+        <button v-for="item in navItems" :key="item.name" @click="$router.push(item.path)" class="btn btn-outline btn-sm">
           {{ item.label }}
         </button>
       </div>
@@ -42,10 +39,17 @@
 </template>
 
 <script setup>
-import { useRouter, useRoute } from 'vue-router'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import MobileTabHeader from '../../components/MobileTabHeader.vue'
 
-const router = useRouter()
 const route = useRoute()
+
+// 根据当前路由获取页面标题
+const currentPageTitle = computed(() => {
+  const currentItem = navItems.find(item => item.name === route.name)
+  return currentItem ? currentItem.label : '应用'
+})
 
 // 移动端 Tab 导航项配置
 const navItems = [
@@ -64,13 +68,13 @@ const navItems = [
   {
     name: 'create',
     path: '/create',
-    label: '创建',
+    label: '创建角色',
     icon: 'M12 4v16m8-8H4',
   },
   {
     name: 'member',
     path: '/member',
-    label: '会员',
+    label: '会员订阅',
     icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
   },
   {
