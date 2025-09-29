@@ -6,7 +6,8 @@
       "WebFetch(domain:chat.openai.com)",
       "mcp__context7__resolve-library-id",
       "WebSearch",
-      "WebFetch(domain:daisyui.com)"
+      "WebFetch(domain:daisyui.com)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []

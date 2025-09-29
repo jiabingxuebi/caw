@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import AppHeader from './components/AppHeader.vue'
+import WebHeader from './components/WebHeader.vue'
 
 const route = useRoute()
 
@@ -138,7 +138,7 @@ const currentPageTitle = computed(() => {
         :style="{ marginLeft: sidebarCollapsed ? 'var(--sidebar-width-collapsed)' : 'var(--sidebar-width-expanded)' }"
       >
         <!-- 顶部Header -->
-        <AppHeader :sidebar-collapsed="sidebarCollapsed" />
+        <WebHeader :sidebar-collapsed="sidebarCollapsed" />
 
         <main class="flex-1 overflow-auto" style="padding-top: var(--header-height)">
           <router-view />
@@ -147,11 +147,8 @@ const currentPageTitle = computed(() => {
     </div>
 
     <div class="lg:hidden min-h-screen flex flex-col">
-      <!-- 顶部Header -->
-      <AppHeader :sidebar-collapsed="false" />
-
       <!-- 页面内容 -->
-      <main class="flex-1" style="padding-top: var(--header-height); padding-bottom: var(--dock-height)">
+      <main class="flex-1 pb-20">
         <router-view />
       </main>
 

@@ -1,6 +1,86 @@
 <template>
-  <div class="p-4">
-    <!-- 聊天列表 -->
+  <div>
+    <!-- 手机端头部 -->
+    <MobileTabHeader>
+      <template #left>
+        <h1 class="text-lg font-semibold text-base-content">聊天</h1>
+      </template>
+
+      <template #right>
+        <div class="relative">
+          <button
+            class="btn btn-ghost btn-circle btn-sm"
+            @click="toggleDropdown"
+            title="更多选项"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+          </button>
+
+          <!-- 下拉菜单 -->
+          <div
+            v-if="showDropdown"
+            class="absolute right-0 top-full mt-1 w-48 bg-base-100 rounded-lg shadow-lg border border-base-300 py-1 z-50"
+            @click.stop
+          >
+            <button
+              class="w-full px-4 py-2 text-left text-sm hover:bg-base-200 flex items-center gap-3"
+              @click="newChat"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              新建聊天
+            </button>
+
+            <button
+              class="w-full px-4 py-2 text-left text-sm hover:bg-base-200 flex items-center gap-3"
+              @click="searchChats"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              搜索聊天
+            </button>
+
+            <button
+              class="w-full px-4 py-2 text-left text-sm hover:bg-base-200 flex items-center gap-3"
+              @click="clearAllChats"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              清空所有聊天
+            </button>
+
+            <hr class="my-1 border-base-300">
+
+            <button
+              class="w-full px-4 py-2 text-left text-sm hover:bg-base-200 flex items-center gap-3"
+              @click="settings"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              设置
+            </button>
+          </div>
+
+          <!-- 点击空白处关闭下拉菜单 -->
+          <div
+            v-if="showDropdown"
+            class="fixed inset-0 z-40"
+            @click="hideDropdown"
+          ></div>
+        </div>
+      </template>
+    </MobileTabHeader>
+
+    <!-- 页面内容 -->
+    <div class="p-4 lg:pt-4" style="padding-top: calc(var(--header-height) + 1rem)">
+      <!-- 聊天列表 -->
     <div class="space-y-2">
       <div
         v-for="chat in chatList"
@@ -92,14 +172,54 @@
       class="fixed inset-0 z-40"
       @click="hideContextMenu"
     ></div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import MobileTabHeader from '../components/MobileTabHeader.vue'
 
 const router = useRouter()
+
+// 下拉菜单状态
+const showDropdown = ref(false)
+
+// 切换下拉菜单
+const toggleDropdown = () => {
+  showDropdown.value = !showDropdown.value
+}
+
+// 隐藏下拉菜单
+const hideDropdown = () => {
+  showDropdown.value = false
+}
+
+// 菜单操作函数
+const newChat = () => {
+  console.log('新建聊天')
+  hideDropdown()
+  // 这里可以添加新建聊天的逻辑
+}
+
+const searchChats = () => {
+  console.log('搜索聊天')
+  hideDropdown()
+  // 这里可以添加搜索聊天的逻辑
+}
+
+const clearAllChats = () => {
+  console.log('清空所有聊天')
+  hideDropdown()
+  // 这里可以添加清空聊天的逻辑
+}
+
+const settings = () => {
+  console.log('设置')
+  hideDropdown()
+  // 这里可以添加跳转到设置页面的逻辑
+}
 
 // 上下文菜单状态
 const contextMenu = ref({
