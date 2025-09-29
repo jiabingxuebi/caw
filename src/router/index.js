@@ -37,6 +37,17 @@ const router = createRouter({
       name: 'profile',
       component: ProfileView
     }
+    // 未来可以在这里添加独立页面路由
+    // {
+    //   path: '/chat/:id',
+    //   name: 'chat-detail',
+    //   component: ChatDetailView
+    // },
+    // {
+    //   path: '/settings',
+    //   name: 'settings',
+    //   component: SettingsView
+    // }
   ],
 })
 
