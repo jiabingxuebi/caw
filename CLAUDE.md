@@ -72,3 +72,37 @@ npm run format
 - 新页面需要在 `src/router/index.js` 中注册路由
 - 独立页面 (无底部导航) 需添加 `meta: { standalone: true }`
 - 遵循现有的 Tailwind + DaisyUI 样式规范
+
+## DaisyUI 组件使用
+
+项目使用 DaisyUI 作为 UI 组件库，**优先使用 DaisyUI 组件而非自定义样式**：
+
+### 常用组件
+- **按钮**: `btn`, `btn-primary`, `btn-ghost`, `btn-circle`
+- **卡片**: `card`, `card-body`
+- **下拉菜单**: `dropdown`, `dropdown-content`, `menu`
+- **表单**: `input`, `textarea`, `select`, `toggle`
+- **加载状态**: `loading`, `loading-spinner`
+- **模态框**: `modal`
+
+### DaisyUI 优先原则
+1. 检查功能需求，优先查找对应的 DaisyUI 组件
+2. 使用 DaisyUI 的语义化类名而非自定义 Tailwind 组合
+3. 利用 DaisyUI 的主题系统自动适配明暗主题
+
+### 示例
+```html
+<!-- ✅ 好：使用 DaisyUI dropdown -->
+<div class="dropdown dropdown-end">
+  <div tabindex="0" role="button" class="btn btn-ghost btn-circle">⋮</div>
+  <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box shadow">
+    <li><a>选项1</a></li>
+  </ul>
+</div>
+
+<!-- ❌ 避免：自定义下拉菜单样式 -->
+<div class="relative">
+  <button class="w-8 h-8 rounded-lg hover:bg-base-200">⋮</button>
+  <div class="absolute bg-base-100 border rounded-lg shadow">...</div>
+</div>
+```

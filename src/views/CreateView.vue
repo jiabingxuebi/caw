@@ -1,18 +1,41 @@
 <template>
-  <div class="px-4 max-w-4xl mx-auto">
-    <!-- 页面标题 - 只在桌面端显示 -->
-    <div class="mb-6 hidden lg:block">
-      <h1 class="text-2xl font-bold text-base-content mb-2">创建角色</h1>
-      <p class="text-base-content/60">创建你的专属聊天机器人角色，打造独特的对话体验。</p>
-    </div>
+  <div class="flex flex-col h-full max-w-4xl mx-auto">
+    <!-- 移动端头部 -->
+    <MobileTabHeader class="lg:hidden flex-shrink-0">
+      <template #left>
+        <h1 class="text-xl font-semibold text-base-content">创建角色</h1>
+      </template>
+      <template #right>
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+          </div>
+          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow">
+            <li><a @click="handleUploadCharacterCard">上传角色卡</a></li>
+          </ul>
+        </div>
+      </template>
+    </MobileTabHeader>
 
     <!-- 角色创建表单 -->
-    <CharacterCreateOrModify mode="inline" @character-saved="handleCharacterSaved" @character-draft-saved="handleCharacterDraftSaved" />
+    <div class="flex-1 overflow-y-auto px-4 pt-4">
+      <CharacterCreateOrModify mode="inline" @character-saved="handleCharacterSaved" @character-draft-saved="handleCharacterDraftSaved" />
+    </div>
   </div>
 </template>
 
 <script setup>
-import CharacterCreateOrModify from '../components/CharacterCreateOrModify.vue'
+import CharacterCreateOrModify from '@/components/CharacterCreateOrModify.vue'
+import MobileTabHeader from '@/components/MobileTabHeader.vue'
+
+// 上传角色卡处理函数
+const handleUploadCharacterCard = () => {
+  // TODO: 实现上传角色卡功能
+  console.log('上传角色卡功能待实现')
+  alert('上传角色卡功能即将推出！')
+}
 
 // 处理角色保存成功
 const handleCharacterSaved = characterData => {

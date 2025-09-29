@@ -1,13 +1,6 @@
 <template>
   <!-- 移动端主容器 -->
-  <div class="lg:hidden min-h-screen flex flex-col">
-    <!-- 移动端头部 -->
-    <MobileTabHeader>
-      <template #left>
-        <h1 class="text-xl font-semibold text-base-content">{{ currentPageTitle }}</h1>
-      </template>
-    </MobileTabHeader>
-
+  <div class="min-h-screen flex flex-col">
     <!-- Tab 页面内容区域 -->
     <main class="flex-1 pb-20" style="padding-top: var(--header-height)">
       <router-view />
@@ -41,7 +34,6 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import MobileTabHeader from '../../components/MobileTabHeader.vue'
 
 const route = useRoute()
 
