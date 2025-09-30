@@ -90,6 +90,51 @@ npm run format
 2. 使用 DaisyUI 的语义化类名而非自定义 Tailwind 组合
 3. 利用 DaisyUI 的主题系统自动适配明暗主题
 
+## API 请求工具
+
+项目提供了完整的API请求解决方案，按功能模块组织：
+
+### 目录结构
+```
+src/api/
+├── index.js          # API统一入口
+├── http.js           # HTTP客户端工具
+├── characterApi.js   # 角色相关API
+└── messageApi.js     # 消息/聊天相关API
+```
+
+### 基础用法
+```javascript
+import api from '@/api'
+
+// 角色相关操作
+const characters = await api.character.getCharacterList({ page: 1, limit: 10 })
+const character = await api.character.createCharacter(characterData)
+
+// 消息/聊天操作
+const message = await api.message.sendMessage({ chatId: '123', content: 'Hello!' })
+const chat = await api.chat.createChat({ characterId: '456' })
+```
+
+### API模块说明
+- **api.character**: 角色管理（创建、更新、删除、上传头像、导入导出等）
+- **api.message**: 消息操作（发送、编辑、删除、点赞等）
+- **api.chat**: 聊天会话管理（创建、归档、分享、导出等）
+- **api.realtime**: 实时功能（WebSocket、打字状态等）
+
+### 配置说明
+- 在 `.env` 文件中设置 `VITE_API_BASE_URL` 配置API基础地址
+- 自动处理认证token（从localStorage或sessionStorage获取）
+- 支持请求/响应拦截器
+- 自动重试机制（网络错误和5xx错误）
+- 请求超时处理（默认10秒）
+
+### 新建API模块
+创建新的API模块时，参考现有文件结构：
+1. 创建 `xxxApi.js` 文件
+2. 导出具体的API方法
+3. 在 `api/index.js` 中导入并导出
+
 ### 示例
 ```html
 <!-- ✅ 好：使用 DaisyUI dropdown -->
