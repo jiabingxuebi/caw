@@ -1,0 +1,10 @@
+/* 全局组件样式 */
+
+@layer components {
+  /* 表单控件无聚焦效果 */
+  .daisy-clean {
+    @apply focus:outline-none focus:shadow-none focus:ring-0;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+}

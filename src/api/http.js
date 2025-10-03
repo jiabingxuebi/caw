@@ -3,6 +3,8 @@
  * 基于 fetch API 封装，支持拦截器、错误处理、自动重试等功能
  */
 
+import toast from '@/utils/toast'
+
 class HttpClient {
   constructor(config = {}) {
     // 默认配置
@@ -11,11 +13,9 @@ class HttpClient {
       timeout: config.timeout || 10000,
       headers: {
         'Content-Type': 'application/json',
-        ...config.headers
+        ...config.headers,
       },
-      retryCount: config.retryCount || 0, // 默认不重试
-      retryDelay: config.retryDelay || 1000,
-      ...config
+      ...config,
     }
 
     // 拦截器
@@ -32,13 +32,13 @@ class HttpClient {
     request: {
       use: (fulfilled, rejected) => {
         this.requestInterceptors.push({ fulfilled, rejected })
-      }
+      },
     },
     response: {
       use: (fulfilled, rejected) => {
         this.responseInterceptors.push({ fulfilled, rejected })
-      }
-    }
+      },
+    },
   }
 
   /**
@@ -67,7 +67,7 @@ class HttpClient {
 
       fetch(url, {
         ...options,
-        signal: controller.signal
+        signal: controller.signal,
       })
         .then(response => {
           clearTimeout(timeoutId)
@@ -98,10 +98,21 @@ class HttpClient {
     }
 
     if (!response.ok) {
-      const error = new Error(data.message || `HTTP Error: ${response.status}`)
+      // 处理标准错误响应格式
+      const errorMessage = data.message || data.msg
+      const error = new Error(errorMessage)
       error.status = response.status
       error.data = data
+
+      // 显示错误 Toast
+      toast.error(errorMessage)
+
       throw error
+    }
+
+    // 处理成功响应，提取 data 字段
+    if (data && typeof data === 'object' && data.status === 'ok' && data.hasOwnProperty('data')) {
+      return data.data
     }
 
     return data
@@ -147,40 +158,6 @@ class HttpClient {
   }
 
   /**
-   * 重试请求
-   * @param {Function} requestFn - 请求函数
-   * @param {number} retryCount - 重试次数
-   * @param {number} delay - 延迟时间
-   * @returns {Promise} 请求结果
-   */
-  async retryRequest(requestFn, retryCount = this.config.retryCount, delay = this.config.retryDelay) {
-    try {
-      return await requestFn()
-    } catch (error) {
-      if (retryCount > 0 && this.shouldRetry(error)) {
-        console.warn(`Request failed, retrying... (${retryCount} attempts left)`, error.message)
-        await new Promise(resolve => setTimeout(resolve, delay))
-        return this.retryRequest(requestFn, retryCount - 1, delay * 1.5)
-      }
-      throw error
-    }
-  }
-
-  /**
-   * 判断是否应该重试
-   * @param {Error} error - 错误对象
-   * @returns {boolean} 是否重试
-   */
-  shouldRetry(error) {
-    // 网络错误或服务器错误才重试
-    return (
-      error.name === 'TypeError' || // 网络错误
-      (error.status >= 500 && error.status < 600) || // 服务器错误
-      error.message.includes('timeout') // 超时
-    )
-  }
-
-  /**
    * 核心请求方法
    * @param {string} url - 请求URL
    * @param {Object} options - 请求选项
@@ -192,7 +169,7 @@ class HttpClient {
       url,
       headers: { ...this.config.headers, ...options.headers },
       method: options.method || 'GET',
-      ...options
+      ...options,
     }
 
     // 应用请求拦截器
@@ -201,7 +178,7 @@ class HttpClient {
     // 构建fetch选项
     const fetchOptions = {
       method: config.method,
-      headers: config.headers
+      headers: config.headers,
     }
 
     // 处理请求体
@@ -225,18 +202,13 @@ class HttpClient {
       requestURL += (fullURL.includes('?') ? '&' : '?') + searchParams.toString()
     }
 
-    // 执行请求（带重试）
-    const executeRequest = async () => {
+    // 执行请求
+    try {
       const response = await this.createTimeoutFetch(requestURL, fetchOptions)
       const data = await this.handleResponse(response)
-      return data
-    }
-
-    try {
-      let result = await this.retryRequest(executeRequest)
 
       // 应用响应拦截器
-      result = await this.applyResponseInterceptors(result)
+      const result = await this.applyResponseInterceptors(data)
 
       return result
     } catch (error) {
@@ -326,8 +298,8 @@ class HttpClient {
       data: formData,
       headers: {
         // 不设置Content-Type，让浏览器自动处理
-        ...options.headers
-      }
+        ...options.headers,
+      },
     })
   }
 }
@@ -365,15 +337,10 @@ http.interceptors.response.use(
       // 可以触发登录页面跳转
       // router.push('/login')
 
-      // 或者显示错误提示
       console.warn('Authentication failed, please login again')
     }
 
-    // 处理其他HTTP错误
-    if (error.status >= 500) {
-      console.error('Server error:', error.message)
-    }
-
+    // 错误已在 handleResponse 中处理和显示，直接抛出
     throw error
   }
 )

@@ -26,22 +26,3 @@ export { http, HttpClient }
 
 // 默认导出API对象
 export default api
-
-/**
- * 使用示例：
- *
- * import api from '@/api'
- *
- * // 获取角色列表
- * const characters = await api.character.getCharacterList({ page: 1, limit: 10 })
- *
- * // 发送消息
- * const message = await api.message.sendMessage({
- *   chatId: '123',
- *   characterId: '456',
- *   content: 'Hello!'
- * })
- *
- * // 创建聊天
- * const chat = await api.chat.createChat({ characterId: '456' })
- */

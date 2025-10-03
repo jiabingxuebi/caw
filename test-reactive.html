@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div>
+      <h3>测试响应式数据</h3>
+      <button @click="toggle">切换模式 (当前: {{ mode }})</button>
+      
+      <!-- 桌面模式 -->
+      <div v-if="mode === 'desktop'" style="border: 1px solid blue; padding: 10px; margin: 10px;">
+        <h4>桌面模式</h4>
+        <input v-model="formData.name" placeholder="名称" style="margin: 5px;">
+        <div>当前值: {{ formData.name }}</div>
+      </div>
+      
+      <!-- 移动模式 -->
+      <div v-if="mode === 'mobile'" style="border: 1px solid red; padding: 10px; margin: 10px;">
+        <h4>移动模式</h4>
+        <input v-model="formData.name" placeholder="名称" style="margin: 5px;">
+        <div>当前值: {{ formData.name }}</div>
+      </div>
+      
+      <div>formData.name 的值: {{ formData.name }}</div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, reactive, ref } = Vue
+    
+    createApp({
+      setup() {
+        const mode = ref('desktop')
+        const formData = reactive({
+          name: ''
+        })
+        
+        const toggle = () => {
+          mode.value = mode.value === 'desktop' ? 'mobile' : 'desktop'
+        }
+        
+        return {
+          mode,
+          formData,
+          toggle
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>

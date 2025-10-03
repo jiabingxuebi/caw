@@ -21,13 +21,11 @@
 
     <!-- 角色创建表单 -->
     <div class="flex-1 overflow-y-auto px-4 pt-4">
-      <CharacterCreateOrModify mode="inline" @character-saved="handleCharacterSaved" @character-draft-saved="handleCharacterDraftSaved" />
+      <CharacterCreateOrModify ref="characterFormRef" :initial-data="uploadedCharacterData" @character-saved="handleCharacterSaved" @character-draft-saved="handleCharacterDraftSaved" />
     </div>
 
     <!-- Loading Dialog -->
     <LoadingDialog v-model="loading.show" :title="loading.title" :description="loading.description" :show-progress="loading.showProgress" :progress="loading.progress" />
-    <!-- Toast 通知 -->
-    <Toast ref="toast" />
   </div>
 </template>
 
@@ -36,11 +34,13 @@ import { ref } from 'vue'
 import CharacterCreateOrModify from '@/components/CharacterCreateOrModify.vue'
 import MobileTabHeader from '@/components/MobileTabHeader.vue'
 import LoadingDialog from '@/components/LoadingDialog.vue'
-import Toast from '@/components/Toast.vue'
 import api from '@/api'
 
-// Toast 组件引用
-const toast = ref(null)
+// 组件引用
+const characterFormRef = ref(null)
+
+// 上传的角色数据
+const uploadedCharacterData = ref(null)
 
 // Loading 状态
 const loading = ref({
@@ -84,13 +84,11 @@ const handleUploadCharacterCard = async () => {
     const isValidType = fileName.endsWith('.json') || fileName.endsWith('.png')
 
     if (!isValidType) {
-      toast.value?.error('只支持上传 JSON 或 PNG 格式的文件')
       return
     }
 
     // 验证文件大小（限制10MB）
     if (file.size > 10 * 1024 * 1024) {
-      toast.value?.error('文件大小不能超过 10MB')
       return
     }
 
@@ -104,30 +102,14 @@ const handleUploadCharacterCard = async () => {
       hideLoading()
       console.log('角色卡上传成功:', result)
 
-      const fileType = fileName.endsWith('.json') ? 'JSON角色卡' : 'PNG角色卡'
-      toast.value?.success(`${fileType}上传成功！`)
-
-      // 可以在这里添加后续处理逻辑
-      // 比如刷新角色列表、跳转到角色详情页等
+      // 将上传返回的角色数据填充到表单中
+      if (result && typeof result === 'object') {
+        uploadedCharacterData.value = result
+        // watch 监听器会自动调用 loadInitialData()，不需要手动调用
+      }
     } catch (error) {
       hideLoading()
       console.error('角色卡上传失败:', error)
-
-      let errorMessage = '角色卡上传失败'
-
-      if (error.status === 400) {
-        errorMessage = '文件无效或格式不正确，请检查文件内容'
-      } else if (error.status === 413) {
-        errorMessage = '文件太大，请选择小于 10MB 的文件'
-      } else if (error.status === 415) {
-        errorMessage = '不支持的文件类型，请上传 JSON 或 PNG 文件'
-      } else if (error.message.includes('timeout')) {
-        errorMessage = '上传超时，请检查网络连接后重试'
-      } else if (error.message.includes('Network')) {
-        errorMessage = '网络连接失败，请检查网络后重试'
-      }
-
-      toast.value?.error(errorMessage)
     }
   }
 
@@ -155,14 +137,12 @@ const handleCharacterSaved = async characterData => {
 
     hideLoading()
     console.log('角色保存到服务器成功:', result)
-    toast.value?.success(characterData.id ? '角色更新成功！' : '角色创建成功！')
 
     // 可以跳转到角色详情页或列表页
     // router.push(`/characters/${result.id}`)
   } catch (error) {
     hideLoading()
     console.error('保存到服务器失败:', error)
-    toast.value?.error('保存到服务器失败: ' + error.message)
   }
 }
 
@@ -179,11 +159,9 @@ const handleCharacterDraftSaved = async characterData => {
 
     hideLoading()
     console.log('草稿保存到服务器成功:', result)
-    toast.value?.success('草稿保存成功！')
   } catch (error) {
     hideLoading()
     console.error('草稿保存失败:', error)
-    toast.value?.error('草稿保存失败: ' + error.message)
   }
 }
 </script>

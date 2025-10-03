@@ -28,7 +28,7 @@ export const characterAPI = {
    * @param {string|number} id - 角色ID
    * @returns {Promise} 角色详情数据
    */
-  getCharacterDetail: (id) => {
+  getCharacterDetail: id => {
     return http.get(`/characters/${id}`)
   },
 
@@ -36,26 +36,31 @@ export const characterAPI = {
    * 创建新角色
    * @param {Object} characterData - 角色数据
    * @param {string} characterData.name - 角色名称
-   * @param {string} characterData.title - 角色描述
+   * @param {string} characterData.description - 角色描述
    * @param {string} characterData.greeting - 问候语
    * @param {string} characterData.personality - 角色性格
    * @param {string} characterData.visibility - 可见性设置
-   * @param {File} characterData.mainImage - 角色头像
+   * @param {File} characterData.backgroundImageFile - 背景图片文件
    * @returns {Promise} 创建结果
    */
-  createCharacter: (characterData) => {
+  createCharacter: characterData => {
     // 如果包含文件，使用FormData
-    if (characterData.mainImage instanceof File) {
+    if (characterData.backgroundImageFile instanceof File) {
       const formData = new FormData()
       Object.keys(characterData).forEach(key => {
         if (characterData[key] !== null && characterData[key] !== undefined) {
-          formData.append(key, characterData[key])
+          // 特殊处理文件字段名映射
+          if (key === 'backgroundImageFile') {
+            formData.append('backgroundImage', characterData[key])
+          } else {
+            formData.append(key, characterData[key])
+          }
         }
       })
       return http.post('/characters', formData, {
         headers: {
           // 让浏览器自动设置Content-Type
-        }
+        },
       })
     }
 
@@ -70,17 +75,22 @@ export const characterAPI = {
    */
   updateCharacter: (id, characterData) => {
     // 如果包含文件，使用FormData
-    if (characterData.mainImage instanceof File) {
+    if (characterData.backgroundImageFile instanceof File) {
       const formData = new FormData()
       Object.keys(characterData).forEach(key => {
         if (characterData[key] !== null && characterData[key] !== undefined) {
-          formData.append(key, characterData[key])
+          // 特殊处理文件字段名映射
+          if (key === 'backgroundImageFile') {
+            formData.append('backgroundImage', characterData[key])
+          } else {
+            formData.append(key, characterData[key])
+          }
         }
       })
       return http.put(`/characters/${id}`, formData, {
         headers: {
           // 让浏览器自动设置Content-Type
-        }
+        },
       })
     }
 
@@ -92,7 +102,7 @@ export const characterAPI = {
    * @param {string|number} id - 角色ID
    * @returns {Promise} 删除结果
    */
-  deleteCharacter: (id) => {
+  deleteCharacter: id => {
     return http.delete(`/characters/${id}`)
   },
 
@@ -101,7 +111,7 @@ export const characterAPI = {
    * @param {Array} ids - 角色ID数组
    * @returns {Promise} 删除结果
    */
-  batchDeleteCharacters: (ids) => {
+  batchDeleteCharacters: ids => {
     return http.post('/characters/batch-delete', { ids })
   },
 
@@ -134,7 +144,7 @@ export const characterAPI = {
    * @param {Object} draftData - 草稿数据
    * @returns {Promise} 保存结果
    */
-  saveDraft: (draftData) => {
+  saveDraft: draftData => {
     return http.post('/characters/drafts', draftData)
   },
 
@@ -152,7 +162,7 @@ export const characterAPI = {
    * @param {string|number} id - 草稿ID
    * @returns {Promise} 草稿详情
    */
-  getDraftDetail: (id) => {
+  getDraftDetail: id => {
     return http.get(`/characters/drafts/${id}`)
   },
 
@@ -161,7 +171,7 @@ export const characterAPI = {
    * @param {string|number} id - 草稿ID
    * @returns {Promise} 删除结果
    */
-  deleteDraft: (id) => {
+  deleteDraft: id => {
     return http.delete(`/characters/drafts/${id}`)
   },
 
@@ -170,7 +180,7 @@ export const characterAPI = {
    * @param {string|number} id - 草稿ID
    * @returns {Promise} 发布结果
    */
-  publishDraft: (id) => {
+  publishDraft: id => {
     return http.post(`/characters/drafts/${id}/publish`)
   },
 
@@ -179,24 +189,14 @@ export const characterAPI = {
    * @param {File} file - 角色卡文件（JSON/PNG格式）
    * @returns {Promise} 上传结果
    */
-  uploadCharacterCard: (file) => {
+  uploadCharacterCard: file => {
     const formData = new FormData()
     formData.append('file', file)
     return http.post('/character/upload', formData, {
       headers: {
         // 让浏览器自动设置Content-Type为multipart/form-data
-      }
+      },
     })
-  },
-
-  /**
-   * 导入角色卡（旧方法，保持向后兼容）
-   * @param {File} file - 角色卡文件
-   * @returns {Promise} 导入结果
-   */
-  importCharacterCard: (file) => {
-    // 使用新的上传接口
-    return characterAPI.uploadCharacterCard(file)
   },
 
   /**
@@ -209,8 +209,8 @@ export const characterAPI = {
     return http.get(`/characters/${id}/export`, {
       params: { format },
       headers: {
-        'Accept': format === 'json' ? 'application/json' : 'text/plain'
-      }
+        Accept: format === 'json' ? 'application/json' : 'text/plain',
+      },
     })
   },
 
@@ -291,9 +291,7 @@ export const characterAPI = {
    * @returns {Promise} 收藏结果
    */
   toggleFavorite: (id, favorite = true) => {
-    return favorite
-      ? http.post(`/characters/${id}/favorite`)
-      : http.delete(`/characters/${id}/favorite`)
+    return favorite ? http.post(`/characters/${id}/favorite`) : http.delete(`/characters/${id}/favorite`)
   },
 
   /**
@@ -303,7 +301,7 @@ export const characterAPI = {
    */
   getFavoriteCharacters: (params = {}) => {
     return http.get('/characters/favorites', { params })
-  }
+  },
 }
 
 export default characterAPI
