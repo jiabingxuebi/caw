@@ -97,7 +97,7 @@ const handleUploadCharacterCard = async () => {
       showLoading('上传中', '', false)
 
       // 使用角色API上传文件
-      const result = await api.character.uploadCharacterCard(file)
+      const result = await api.characterMeta.uploadCharacterCard(file)
 
       hideLoading()
       console.log('角色卡上传成功:', result)

@@ -8,12 +8,16 @@ import http, { HttpClient } from './http'
 
 // 导入各个API服务
 import { characterAPI } from './characterApi'
+import { characterMetaAPI } from './characterMetaApi'
 import { messageAPI, chatAPI, realtimeAPI } from './messageApi'
 
 // 统一导出所有API服务
 export const api = {
   // 角色相关
   character: characterAPI,
+
+  // 角色卡元数据相关
+  characterMeta: characterMetaAPI,
 
   // 消息/聊天相关
   message: messageAPI,

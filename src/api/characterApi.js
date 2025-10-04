@@ -116,30 +116,6 @@ export const characterAPI = {
   },
 
   /**
-   * 上传角色头像
-   * @param {string|number} id - 角色ID
-   * @param {File} file - 头像文件
-   * @returns {Promise} 上传结果
-   */
-  uploadAvatar: (id, file) => {
-    const formData = new FormData()
-    formData.append('avatar', file)
-    return http.upload(`/characters/${id}/avatar`, formData)
-  },
-
-  /**
-   * 上传角色背景图
-   * @param {string|number} id - 角色ID
-   * @param {File} file - 背景图文件
-   * @returns {Promise} 上传结果
-   */
-  uploadBackground: (id, file) => {
-    const formData = new FormData()
-    formData.append('background', file)
-    return http.upload(`/characters/${id}/background`, formData)
-  },
-
-  /**
    * 保存角色草稿
    * @param {Object} draftData - 草稿数据
    * @returns {Promise} 保存结果
@@ -182,21 +158,6 @@ export const characterAPI = {
    */
   publishDraft: id => {
     return http.post(`/characters/drafts/${id}/publish`)
-  },
-
-  /**
-   * 上传角色卡文件（JSON或PNG格式）
-   * @param {File} file - 角色卡文件（JSON/PNG格式）
-   * @returns {Promise} 上传结果
-   */
-  uploadCharacterCard: file => {
-    const formData = new FormData()
-    formData.append('file', file)
-    return http.post('/character/upload', formData, {
-      headers: {
-        // 让浏览器自动设置Content-Type为multipart/form-data
-      },
-    })
   },
 
   /**
