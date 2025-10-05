@@ -110,9 +110,13 @@ import CharacterTagFilterDialog from '../components/CharacterTagFilterDialog.vue
 import DesktopCharacterFilter from '../components/DesktopCharacterFilter.vue'
 import MobileCharacterFilter from '../components/MobileCharacterFilter.vue'
 import { useTheme } from '../composables/useTheme'
+import api from '@/api'
 
 // 主题切换
 const { toggleTheme, isDark } = useTheme()
+
+// 角色数据
+const allCharacters = ref([])
 
 // 搜索状态
 const searchQuery = ref('')
@@ -138,8 +142,10 @@ const hasMore = ref(true)
 // 计算所有唯一标签
 const allTags = computed(() => {
   const tags = new Set()
-  allCharacters.forEach(char => {
-    char.tags.forEach(tag => tags.add(tag))
+  allCharacters.value.forEach(char => {
+    if (char.tags) {
+      char.tags.forEach(tag => tags.add(tag))
+    }
   })
   return Array.from(tags).sort()
 })
@@ -147,9 +153,9 @@ const allTags = computed(() => {
 // 过滤后的角色列表（基于完整数据库）
 const filteredCharacters = computed(() => {
   if (selectedTags.value.length === 0) {
-    return allCharacters
+    return allCharacters.value
   }
-  return allCharacters.filter(char => selectedTags.value.some(tag => char.tags.includes(tag)))
+  return allCharacters.value.filter(char => char.tags && selectedTags.value.some(tag => char.tags.includes(tag)))
 })
 
 // 当前页显示的角色
@@ -234,8 +240,30 @@ const handleClickOutside = event => {
   }
 }
 
+// 获取角色数据
+const fetchCharacters = async () => {
+  try {
+    const data = await api.character.getCharacters()
+    allCharacters.value = data.map(char => ({
+      id: char.id,
+      name: char.name,
+      username: '',
+      description: char.description,
+      image: char.backgroundImageUrl || 'https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp',
+      tags: [],
+      conversations: '0',
+      likes: 0,
+      users: 0,
+    }))
+  } catch (error) {
+    console.error('获取角色数据失败:', error)
+  }
+}
+
 // 初始化数据
 const initializeData = async () => {
+  await fetchCharacters()
+
   // 初始显示第一页数据
   currentPage.value = 1
 
@@ -274,140 +302,4 @@ onUnmounted(() => {
     clearTimeout(scrollTimer)
   }
 })
-
-// 模拟完整角色数据库
-const allCharacters = [
-  {
-    id: 1,
-    name: 'Wriothesley',
-    username: '@milaaqwq',
-    description: 'A Wolf in heat',
-    image: 'https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp',
-    tags: ['Dominant', 'FemalePOV', 'NSFW', 'Smell', 'Romantic', 'Gentle Dom'],
-    conversations: '31.5k',
-    likes: 100,
-    users: 177,
-  },
-  {
-    id: 2,
-    name: 'Elena',
-    username: '@artlover',
-    description: 'Creative soul and dreamer',
-    image: 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp',
-    tags: ['Creative', 'Artist', 'Romantic', 'SFW'],
-    conversations: '12.3k',
-    likes: 95,
-    users: 89,
-  },
-  {
-    id: 3,
-    name: 'Marcus',
-    username: '@warrior',
-    description: 'Knight in shining armor',
-    image: 'https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp',
-    tags: ['Protective', 'Strong', 'Medieval', 'Hero'],
-    conversations: '8.7k',
-    likes: 98,
-    users: 145,
-  },
-  {
-    id: 4,
-    name: 'Luna',
-    username: '@moonchild',
-    description: 'Mystical and enchanting',
-    image: 'https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp',
-    tags: ['Mystical', 'Magic', 'Fantasy', 'Elegant'],
-    conversations: '15.2k',
-    likes: 97,
-    users: 203,
-  },
-  {
-    id: 5,
-    name: 'Alex',
-    username: '@techgeek',
-    description: 'Future tech enthusiast',
-    image: 'https://img.daisyui.com/images/stock/photo-1559181567-c3190ca9959b.webp',
-    tags: ['Tech', 'Futuristic', 'Smart', 'Innovation'],
-    conversations: '9.1k',
-    likes: 92,
-    users: 67,
-  },
-  {
-    id: 6,
-    name: 'Sophia',
-    username: '@healer',
-    description: 'Gentle healer with ancient wisdom',
-    image: 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp',
-    tags: ['Healer', 'Wisdom', 'SFW', 'Gentle', 'Caring'],
-    conversations: '22.1k',
-    likes: 156,
-    users: 298,
-  },
-  {
-    id: 7,
-    name: 'Raven',
-    username: '@darksoul',
-    description: 'Dark and mysterious assassin',
-    image: 'https://img.daisyui.com/images/stock/photo-1567653418876-5bb0e566e1c2.webp',
-    tags: ['Dark', 'Mysterious', 'Assassin', 'NSFW', 'Dangerous'],
-    conversations: '18.7k',
-    likes: 134,
-    users: 201,
-  },
-  {
-    id: 8,
-    name: 'Phoenix',
-    username: '@firebird',
-    description: 'Immortal guardian of fire',
-    image: 'https://img.daisyui.com/images/stock/photo-1629904853893-c2c8981a1dc5.webp',
-    tags: ['Fire', 'Immortal', 'Guardian', 'Powerful', 'Magical'],
-    conversations: '26.3k',
-    likes: 189,
-    users: 312,
-  },
-  {
-    id: 9,
-    name: 'Aurora',
-    username: '@lightbringer',
-    description: 'Bringer of dawn and hope',
-    image: 'https://img.daisyui.com/images/stock/photo-1580489944761-15a19d654956.webp',
-    tags: ['Light', 'Hope', 'Dawn', 'Positive', 'Inspiring'],
-    conversations: '14.2k',
-    likes: 167,
-    users: 234,
-  },
-  {
-    id: 10,
-    name: 'Shadow',
-    username: '@nightwalker',
-    description: 'Master of stealth and shadows',
-    image: 'https://img.daisyui.com/images/stock/photo-1568602471122-7832951cc4c5.webp',
-    tags: ['Stealth', 'Shadow', 'Night', 'Silent', 'Ninja'],
-    conversations: '19.8k',
-    likes: 145,
-    users: 189,
-  },
-  {
-    id: 11,
-    name: 'Crystal',
-    username: '@gemkeeper',
-    description: 'Guardian of precious crystals',
-    image: 'https://img.daisyui.com/images/stock/photo-1572635196237-14b3f281503f.webp',
-    tags: ['Crystal', 'Guardian', 'Precious', 'Magic', 'Protection'],
-    conversations: '11.4k',
-    likes: 123,
-    users: 156,
-  },
-  {
-    id: 12,
-    name: 'Storm',
-    username: '@thundergod',
-    description: 'Controller of thunder and lightning',
-    image: 'https://img.daisyui.com/images/stock/photo-1589681424213-023c2da5d0ac.webp',
-    tags: ['Thunder', 'Lightning', 'Storm', 'Power', 'Elemental'],
-    conversations: '23.6k',
-    likes: 178,
-    users: 267,
-  },
-]
 </script>

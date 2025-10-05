@@ -4,6 +4,7 @@ import ChatView from '../views/ChatView.vue'
 import CreateView from '../views/CreateView.vue'
 import MemberView from '../views/MemberView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import MessageView from '../views/MessageView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,12 @@ const router = createRouter({
       component: ProfileView
     },
     // 独立页面路由（移动端无底部导航）
+    {
+      path: '/message',
+      name: 'message',
+      component: MessageView,
+      meta: { standalone: true }
+    },
     {
       path: '/settings',
       name: 'settings',

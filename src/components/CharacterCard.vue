@@ -1,5 +1,5 @@
 <template>
-  <div class="card bg-base-100 shadow-sm group cursor-pointer">
+  <div class="card bg-base-100 shadow-sm group cursor-pointer" @click="handleClick">
     <figure class="relative aspect-[3/4] overflow-hidden rounded-t-xl lg:aspect-[4/5]">
       <img
         :src="character.image"
@@ -110,6 +110,10 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 defineProps({
   character: {
     type: Object,
@@ -132,4 +136,8 @@ defineProps({
 })
 
 defineEmits(['edit', 'delete'])
+
+const handleClick = () => {
+  router.push('/message')
+}
 </script>

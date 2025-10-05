@@ -10,6 +10,14 @@ import http from './http'
 export const characterAPI = {
   /**
    * 获取角色列表
+   * @returns {Promise} 角色列表数据
+   */
+  getCharacters: () => {
+    return http.get('/character')
+  },
+
+  /**
+   * 获取角色列表
    * @param {Object} params - 查询参数
    * @param {number} params.page - 页码
    * @param {number} params.limit - 每页数量
