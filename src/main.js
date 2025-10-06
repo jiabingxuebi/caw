@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import './style.css'
 import './styles/components.css'
+import 'highlight.js/styles/github.css'
 import { useTheme } from './composables/useTheme'
 
 const app = createApp(App)

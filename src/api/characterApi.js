@@ -41,6 +41,15 @@ export const characterAPI = {
   },
 
   /**
+   * 获取角色预览数据
+   * @param {string|number} characterId - 角色ID
+   * @returns {Promise<{characterId: string, firstMessage: string, alternateGreetings: string[]}>}
+   */
+  getCharacterPreview: characterId => {
+    return http.get(`/character/${characterId}/preview`)
+  },
+
+  /**
    * 创建新角色
    * @param {Object} characterData - 角色数据
    * @param {string} characterData.name - 角色名称

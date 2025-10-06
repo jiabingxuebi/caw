@@ -114,7 +114,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-defineProps({
+const props = defineProps({
   character: {
     type: Object,
     required: true,
@@ -138,6 +138,13 @@ defineProps({
 defineEmits(['edit', 'delete'])
 
 const handleClick = () => {
-  router.push('/message')
+  router.push({
+    name: 'message',
+    query: {
+      characterId: props.character?.id,
+      name: props.character?.name,
+      avatar: props.character?.image,
+    },
+  })
 }
 </script>
