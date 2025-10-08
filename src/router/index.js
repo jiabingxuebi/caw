@@ -1,68 +1,68 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ExploreView from '../views/ExploreView.vue'
-import ChatView from '../views/ChatView.vue'
+import ChatListView from '../views/ChatListView.vue'
 import CreateView from '../views/CreateView.vue'
 import MemberView from '../views/MemberView.vue'
 import ProfileView from '../views/ProfileView.vue'
-import MessageView from '../views/MessageView.vue'
+import ChatView from '../views/ChatView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      redirect: '/explore'
+      redirect: '/explore',
     },
     {
       path: '/explore',
       name: 'explore',
-      component: ExploreView
+      component: ExploreView,
     },
     {
-      path: '/chat',
+      path: '/chats',
       name: 'chat',
-      component: ChatView
+      component: ChatListView,
     },
     {
       path: '/create',
       name: 'create',
-      component: CreateView
+      component: CreateView,
     },
     {
       path: '/member',
       name: 'member',
-      component: MemberView
+      component: MemberView,
     },
     {
       path: '/profile',
       name: 'profile',
-      component: ProfileView
+      component: ProfileView,
     },
     // 独立页面路由（移动端无底部导航）
     {
-      path: '/message',
+      path: '/chat',
       name: 'message',
-      component: MessageView,
-      meta: { standalone: true }
+      component: ChatView,
+      meta: { standalone: true },
     },
     {
       path: '/settings',
       name: 'settings',
       component: () => import('../views/mobile/SettingsView.vue'),
-      meta: { standalone: true }
+      meta: { standalone: true },
     },
     {
       path: '/chat/:id',
       name: 'chat-detail',
       component: () => import('../views/mobile/ChatDetailView.vue'),
-      meta: { standalone: true }
+      meta: { standalone: true },
     },
     {
       path: '/character/:id',
       name: 'character-detail',
       component: () => import('../views/mobile/CharacterDetailView.vue'),
-      meta: { standalone: true }
-    }
+      meta: { standalone: true },
+    },
   ],
 })
 
