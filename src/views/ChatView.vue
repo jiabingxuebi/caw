@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-screen flex-col">
-    <MessageHeader :character="character" />
+    <ChatHeader :character="character" />
 
     <div class="flex-1 overflow-y-auto p-4 space-y-4">
       <div v-if="isLoadingPreview" class="flex justify-center py-6 text-base-content/70">
@@ -14,7 +14,7 @@
               <img :src="character.avatar" :alt="character.name" />
             </div>
           </div>
-          <div class="chat-bubble" v-html="firstMessage"></div>
+          <MessageList :blocks="[firstMessage]" message-id="chat" />
         </div>
 
         <div v-if="alternateGreetings.length" class="space-y-2">
@@ -30,15 +30,16 @@
       </div>
     </div>
 
-    <MessageInput @send="handleSendMessage" />
+    <ChatInput @send="handleSendMessage" />
   </div>
 </template>
 
 <script setup>
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import MessageHeader from '../components/MessageHeader.vue'
-import MessageInput from '../components/MessageInput.vue'
+import ChatHeader from '../components/ChatHeader.vue'
+import ChatInput from '../components/ChatInput.vue'
+import MessageList from '../components/message/MessageList.vue'
 import api from '@/api'
 import hljs from 'highlight.js'
 
