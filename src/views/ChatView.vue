@@ -8,25 +8,11 @@
       </div>
 
       <div v-else>
-        <div v-if="firstMessage" class="chat chat-start">
-          <div class="chat-image avatar">
-            <div class="w-10 rounded-full">
-              <img :src="character.avatar" :alt="character.name" />
-            </div>
-          </div>
-          <MessageList :blocks="[firstMessage]" message-id="chat" />
+        <div v-if="hasPreviewContents">
+          <MessageItem :message="messagePreview" message-id="chat" />
         </div>
 
-        <div v-if="alternateGreetings.length" class="space-y-2">
-          <p class="text-sm text-base-content/70">其他问候</p>
-          <div class="flex flex-wrap gap-2">
-            <span v-for="greeting in alternateGreetings" :key="greeting" class="badge badge-neutral badge-outline whitespace-normal">
-              {{ greeting }}
-            </span>
-          </div>
-        </div>
-
-        <div v-if="!firstMessage && !alternateGreetings.length" class="text-center text-base-content/60">暂无预览消息，开始对话吧。</div>
+        <div v-if="!hasPreviewContents" class="text-center text-base-content/60">暂无预览消息，开始对话吧。</div>
       </div>
     </div>
 
@@ -35,11 +21,11 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ChatHeader from '../components/ChatHeader.vue'
 import ChatInput from '../components/ChatInput.vue'
-import MessageList from '../components/message/MessageList.vue'
+import MessageItem from '../components/message/MessageItem.vue'
 import api from '@/api'
 import hljs from 'highlight.js'
 
@@ -62,6 +48,8 @@ const character = ref({
 
 const firstMessage = ref('')
 const alternateGreetings = ref([])
+const messagePreview = ref(null)
+const hasPreviewContents = computed(() => Array.isArray(messagePreview.value?.contents) && messagePreview.value.contents.length > 0)
 const isLoadingPreview = ref(false)
 
 const applyRouteMeta = () => {
@@ -87,10 +75,24 @@ const loadPreview = async characterId => {
       ...character.value,
       id: preview?.characterId || characterId,
     }
+    // 聚合为 message.contents
+    const contents = []
+    if (typeof firstMessage.value === 'string' && firstMessage.value.trim()) {
+      contents.push(firstMessage.value)
+    }
+    if (alternateGreetings.value.length) {
+      contents.push(...alternateGreetings.value.filter(s => typeof s === 'string' && s.trim()))
+    }
+    messagePreview.value = {
+      id: preview?.characterId || characterId || 'preview',
+      role: 'assistant',
+      contents,
+    }
   } catch (error) {
     console.error('获取角色预览失败:', error)
     firstMessage.value = ''
     alternateGreetings.value = []
+    messagePreview.value = { id: characterId || 'preview', role: 'assistant', contents: [] }
   } finally {
     isLoadingPreview.value = false
   }
